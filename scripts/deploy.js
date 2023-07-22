@@ -12,7 +12,33 @@ const tokens = (n) => {
 }
 
 async function main() {
-  const 
+  const [deployer] = await ethers.getSigners()
+
+  console.log("Deploying contracts with the account:", deployer.address)
+
+  const Web3zon = await hre.ethers.getContractFactory("Web3zon")
+  const web3zon = await Web3zon.deploy()
+  await web3zon.deployed()
+
+  console.log("Web3zon deployed to:", web3zon.address)
+
+
+  //List items
+  for(let i= 0; i < items.length; i++) {
+    const tx = await web3zon.listProducts(
+      items[i].id,
+      items[i].name,
+      items[i].category,
+      items[i].image,
+      tokens(items[i].price),
+      items[i].rating,
+      items[i].stock
+    )
+
+    await tx.wait()
+
+    console.log(`Listed item ${items[i].id}: ${items[i].name}`)
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
